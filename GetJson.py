@@ -1,4 +1,5 @@
 import requests
 urlTest = 'https://github.com/timeline.json'
 r=requests.get(urlTest)
-r.json()
+# Need the 'print' to produce output when run as a script
+print r.json()
