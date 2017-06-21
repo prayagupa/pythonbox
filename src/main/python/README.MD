@@ -76,3 +76,15 @@ data-model
 }
 ```
 
+Scan docs
+--------
+
+```
+[ec2-user@ip-10-0-10-217 dynamoDBPythonLab]$ aws dynamodb scan  --table-name InfectionsLookup
+{
+    "Count": 0, 
+    "Items": [], 
+    "ScannedCount": 0, 
+    "ConsumedCapacity": null
+}
+```
