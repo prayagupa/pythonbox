@@ -1,61 +1,54 @@
 import boto3
 import time
+import sys
 
 from botocore.exceptions import NoCredentialsError, ClientError, EndpointConnectionError
 
 INFECTIONS_TABLE_NAME = "InfectionsLookup"
 HTTP_STATUS_SUCCESS = 200
 
-LAB_S3_BUCKET_REGION = "us-west-2"
-LAB_S3_INFECTIONS_DATA_FILE_KEY = "awsu-ilt/AWS-100-DEV/v2.2/binaries/input/lab-3-dynamoDB/InfectionsData.csv"
-LAB_S3_PATIENT_REPORT_PREFIX = "awsu-ilt/AWS-100-DEV/v2.2/binaries/input/lab-3-dynamoDB/PatientRecord"
-LAB_S3_FILE_KEY = "InfectionsData.csv"
-LAB_S3_INFECTIONS_TABLE_NAME = "Infections"
+boto3.setup_default_session(profile_name="aws-federated")
 
-def is_table_active(tableName=LAB_S3_INFECTIONS_TABLE_NAME):
+def is_table_active(tableName=INFECTIONS_TABLE_NAME):
     # Check if the given table exists and active
     try:
-        resource = boto3.resource('dynamodb')
+        resource = boto3.resource('dynamodb', region_name='us-west-2')
         table = resource.Table(tableName)
         if table.table_status == 'ACTIVE':
             return True
     except ClientError as err:
         if (err.response.get('Error').get('Code')
                 == 'ResourceNotFoundException'):
-            print("{0} Table not found".format(tableName))
+            print("[INFO] is_table_active {0} Table not found".format(tableName))
     except Exception as err:
-        print("Error message: {0}".format(err))
+        print("[ERROR] is_table_active message: {0}".format(err))
     return False
 
 def remove_infections_table():
-    # Name of the table
-    table_name = INFECTIONS_TABLE_NAME
 
     # Removes the table_name from the region given as input
     rval = True
-    if is_table_active(table_name):
-        print("{0} Table exists and will be removed.".format(table_name))
+    if is_table_active(INFECTIONS_TABLE_NAME):
+        print("[INFO] {0} Table exists and will be removed.".format(INFECTIONS_TABLE_NAME))
         try:
             rval = False
-            dynamoDB = boto3.resource('dynamodb')
+            dynamoDB = boto3.resource('dynamodb', region_name='us-west-2')
             table = dynamoDB.Table(table_name)
             resp = table.delete()
             time.sleep(15)
             if resp['ResponseMetadata'][
                     'HTTPStatusCode'] == HTTP_STATUS_SUCCESS:
                 rval = True
-                print("{0} Table has been deleted.".format(table_name))
+                print("[INFO] remove_infections_table {0} Table has been deleted.".format(table_name))
         except Exception as err:
             print(
-                "Existing table deletion failed: {0} Table".format(table_name))
-            print("Error Message: {0}".format(err))
+                "[ERROR] remove_infections_table Existing table deletion failed: {0} Table".format(table_name))
+            print("[ERROR] remove_infections_table Error Message: {0}".format(err))
             rval = False
     return rval
 
 
 def create_infections_table_wrapper():
-    # Name of the table
-    table_name = INFECTIONS_TABLE_NAME
 
     # Attributes for partition keys and sort key
     patient_id_attr_name = 'PatientId'
@@ -67,7 +60,7 @@ def create_infections_table_wrapper():
 
     # Create a DynamoDB table and global secondary index
     create_infections_table(
-        table_name,
+        INFECTIONS_TABLE_NAME,
         gsi_name,
         patient_id_attr_name,
         city_attr_name,
@@ -80,7 +73,7 @@ def create_infections_table(
         city_attr_name,
         date_attr_name):
 
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
     try:
         # Create a table with:
         # - the given table name
@@ -115,13 +108,13 @@ def create_infections_table(
         # Wait for the table to become active
         time.sleep(5)
     except Exception as err:
-        print("{0} Table could not be created".format(table_name))
-        print("Error message {0}".format(err))
+        print("[ERROR] {0} Table could not be created".format(table_name))
+        print("[ERROR] message {0}".format(err))
 
 if __name__ == '__main__':
     print('===============================================================')
-    print('Lab 3 DynamoDB - Infections Table creation')
+    print('[INFO] DynamoDB - Infections Table creation')
     print('===============================================================')
     remove_infections_table()
     create_infections_table_wrapper()
-    print(INFECTIONS_TABLE_NAME + " Table created")
+    print("[INFO] " + INFECTIONS_TABLE_NAME + " Table created")

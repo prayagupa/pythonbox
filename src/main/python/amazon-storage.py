@@ -7,8 +7,8 @@ import sys
 # aws_access_key_id=AKIAJOYAKDDLE7WEQTQA
 # aws_secret_access_key=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
 
-#profile = boto3.session.Session(profile_name='nordstrom-federated')
 boto3.setup_default_session(profile_name="aws-federated")
+#boto3.setup_default_session(region_name='us-west-2')
 
 def get_bucket_count():
     print("============================================");
@@ -19,7 +19,7 @@ def get_bucket_count():
         s3 = boto3.resource('s3')
         bucks = list(s3.buckets.all())
         no_of_buckets = len(list(s3.buckets.all()))
-        print("You have", str(no_of_buckets), "Amazon Storage buckets.")
+        print("[INFO] You have", str(no_of_buckets), "Amazon Storage buckets.")
 	for res in bucks:
 	    print(res)
         return no_of_buckets

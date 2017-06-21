@@ -9,6 +9,7 @@ FILE_NAME = "InfectionsData.csv"
 INFECTIONS_TABLE_NAME = "InfectionsLookup"
 DELIMITER = ","
 
+boto3.setup_default_session(profile_name="federated-federated")
 
 def load_infections_data(
         tableName=INFECTIONS_TABLE_NAME,
@@ -20,30 +21,31 @@ def load_infections_data(
     try:
         # Create an S3 resource to download the infections data file from the
         # S3 bucket
-        S3 = boto3.resource('s3', bucketRegion)
-        try:
+#        S3 = boto3.resource('s3', bucketRegion)
+#        try:
             # Check if you have permissions to access the bucket and then
             # retrieve a reference to it
-            S3.meta.client.head_bucket(Bucket=bucket)
-            myBucket = S3.Bucket(bucket)
-        except ClientError as err:
-            print("Could not find bucket")
-            print("Error message {0}".format(err))
-            num_failures = 9999
-            return num_failures
-        except Exception as err: 
-            print("Error message {0}".format(err))
-            num_failures = 9999
-            return num_failures
+#            S3.meta.client.head_bucket(Bucket=bucket)
+#            myBucket = S3.Bucket(bucket)
+#        except ClientError as err:
+#            print("Could not find bucket")
+#            print("Error message {0}".format(err))
+#            num_failures = 9999
+#            return num_failures
+#        except Exception as err: 
+#            print("Error message {0}".format(err))
+#            num_failures = 9999
+#            return num_failures
 
-        try:
+#        try:
             # Download the CSV-formatted infections data file
-            myBucket.download_file(fKey, FName)
-        except Exception as err:
-            print("Error message {0}".format(err))
-            print("Failed to download the infections data file from S3 bucket")
-            num_failures = 9999
-            return num_failures
+#            myBucket.download_file(fKey, FName)
+#        except Exception as err:
+#            print("Error message {0}".format(err))
+#            print("Failed to download the infections data file from S3 bucket")
+#            num_failures = 9999
+#            return num_failures
+
         print("Reading infections data from file, going to begin upload")
         with open(FName, newline='') as fh:
             reader = csv.DictReader(fh, delimiter=DELIMITER)
