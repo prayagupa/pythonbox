@@ -1,3 +1,10 @@
+install python
+
+```
+brew update
+brew install python3
+```
+
 run
 ===
 
