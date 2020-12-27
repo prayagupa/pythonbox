@@ -1,11 +1,12 @@
 from celery import Celery
 import urllib
+
 # pip3 install celery
 # pip3 install celery[sqs]
 # celery -A celery_example worker --loglevel=DEBUG
 
-AWS_ACCESS_KEY_ID='?'
-AWS_SECRET_ACCESS_KEY='?'
+AWS_ACCESS_KEY_ID = '?'
+AWS_SECRET_ACCESS_KEY = '?'
 
 broker_transport_options = {
     'predefined_queues': {
@@ -24,11 +25,11 @@ BROKER_URL = 'sqs://{0}:{1}@'.format(
 
 rabbit_mq_broker = 'amqps://username:pass@my.mq.us-east-1.amazonaws.com:5671'
 
-app = Celery('hello', 
-        broker=rabbit_mq_broker
-        )
+app = Celery('hello',
+             broker=rabbit_mq_broker
+             )
+
 
 @app.task
 def hello():
     return 'hello luyanta'
-

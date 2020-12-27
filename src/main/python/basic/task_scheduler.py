@@ -4,7 +4,7 @@ import time
 while 1:
     print('Starting scheduler...')
 
-    print (2 + 2)
+    print(2 + 2)
     next_task_dt = datetime.now() + timedelta(hours=2)
     next_task_dt = next_task_dt.replace(minute=15)
 
@@ -12,5 +12,4 @@ while 1:
     while datetime.now() < next_task_dt:
         time.sleep(1)
 
-
-print ('Stopping scheduler')
+print('Stopping scheduler')
