@@ -1,6 +1,6 @@
 install python
 
-```
+```bash
 brew update
 brew install python3
 pip3 install boto3
@@ -9,7 +9,7 @@ pip3 install boto3
 run
 ===
 
-```
+```bash
 
 $ python --version
 Python 2.7.10
