@@ -22,3 +22,4 @@ mypy>=1.0.0
 scipy
 sympy
 np
+pillow
