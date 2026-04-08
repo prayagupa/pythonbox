@@ -5,13 +5,14 @@ A tesseract (4D hypercube) is simultaneously rotated in two orthogonal
 4D planes (XW and YZ), then perspective-projected to 3D for display.
 
 Features:
-  • Simultaneous rotation in XW and YZ planes at different speeds
+  • Simultaneous rotation in XW, YZ and ZW planes at different speeds
   • Perspective projection: 4D → 3D  (w-depth gives size variation)
+  • Semi-transparent face panels on all 24 square faces
   • Three-tier neon colouring:
         cyan   – inner cube  (w = −1 face)
         coral  – outer cube  (w = +1 face)
         purple – bridging edges (connect the two cubes through 4D)
-  • Glowing vertex dots whose size tracks w-depth
+  • Glowing vertex dots
   • Dark space background
 
 Run:  python rotating_tesseract.py
@@ -20,8 +21,10 @@ Run:  python rotating_tesseract.py
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.colors as mcolors
 from mpl_toolkits.mplot3d import Axes3D          # noqa: F401  (registers projection)
-from itertools import product
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from itertools import product, combinations
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Tesseract geometry
@@ -30,8 +33,7 @@ from itertools import product
 # 16 vertices: every combination of (±1, ±1, ±1, ±1)
 VERTS_4D = np.array(list(product([-1.0, 1.0], repeat=4)))   # (16, 4)
 
-# Two vertices share an edge ↔ they differ in exactly one coordinate
-# (their L1 distance == 2 because each coordinate is ±1)
+# Edges: two vertices share an edge ↔ they differ in exactly one coordinate
 EDGES = [
     (i, j)
     for i in range(16)
@@ -39,7 +41,6 @@ EDGES = [
     if int(np.sum(np.abs(VERTS_4D[i] - VERTS_4D[j]))) == 2       # 32 edges
 ]
 
-# Colour by the w-coordinates of each edge's endpoints
 def _edge_type(i: int, j: int) -> str:
     wi, wj = VERTS_4D[i, 3], VERTS_4D[j, 3]
     if wi < 0 and wj < 0:  return "inner"
@@ -49,9 +50,45 @@ def _edge_type(i: int, j: int) -> str:
 EDGE_TYPES = [_edge_type(i, j) for i, j in EDGES]
 
 EDGE_STYLE = {
-    "inner":  dict(color="#00D4FF", lw=2.0, alpha=0.90),   # cyan
-    "outer":  dict(color="#FF6B6B", lw=2.0, alpha=0.90),   # coral
-    "bridge": dict(color="#C147E9", lw=1.2, alpha=0.55),   # purple
+    "inner":  dict(color="#FF3B3B", lw=2.0, alpha=0.95),   # red
+    "outer":  dict(color="#4D9FFF", lw=2.0, alpha=0.95),   # blue
+    "bridge": dict(color="#2DDF6A", lw=1.4, alpha=0.85),   # green
+}
+
+# ── 24 square faces of the tesseract ─────────────────────────────────────────
+# A face is defined by fixing 2 of the 4 axes and letting the other 2 vary.
+# Vertices are ordered as a proper quad (CCW).
+FACES_4D: list[list[int]] = []
+FACE_TYPES: list[str]     = []
+
+for _fixed_axes in combinations(range(4), 2):
+    _free_axes = [ax for ax in range(4) if ax not in _fixed_axes]
+    for _fixed_vals in product([-1.0, 1.0], repeat=2):
+        _quad_offsets = [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)]
+        _face_idx: list[int] = []
+        for _fv in _quad_offsets:
+            _v = np.zeros(4)
+            for _ii, _ax in enumerate(_fixed_axes):
+                _v[_ax] = _fixed_vals[_ii]
+            for _ii, _ax in enumerate(_free_axes):
+                _v[_ax] = _fv[_ii]
+            _face_idx.append(int(np.where(np.all(VERTS_4D == _v, axis=1))[0][0]))
+        FACES_4D.append(_face_idx)
+        _fa_list = list(_fixed_axes)
+        if 3 in _fa_list:                                   # w is fixed → xyz face
+            _w_idx = _fa_list.index(3)
+            FACE_TYPES.append("inner" if _fixed_vals[_w_idx] < 0 else "outer")
+        else:                                               # w is free → bridge face
+            FACE_TYPES.append("bridge")
+
+def _rgba(hex_c: str, a: float) -> tuple:
+    r, g, b = mcolors.to_rgb(hex_c)
+    return (r, g, b, a)
+
+FACE_RGBA = {
+    "inner":  _rgba("#FF3B3B", 0.35),   # red
+    "outer":  _rgba("#4D9FFF", 0.35),   # blue
+    "bridge": _rgba("#2DDF6A", 0.20),   # green
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -79,7 +116,7 @@ W_DIST = 3.0   # "camera" distance along the w-axis
 def project(verts4: np.ndarray) -> np.ndarray:
     """Perspective-project (N,4) array to (N,3)."""
     w     = verts4[:, 3]
-    scale = 1.0 / (W_DIST - w)                       # closer w → bigger
+    scale = 1.0 / (W_DIST - w)
     return verts4[:, :3] * scale[:, np.newaxis]
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -106,24 +143,41 @@ ax.set_ylim(-PAD, PAD)
 ax.set_zlim(-PAD, PAD)
 
 ax.set_title(
-    "Rotating Tesseract  ·  4D → 3D Perspective Projection",
-    color="#c9d1d9", fontsize=13, fontweight="bold", pad=14,
+    "Maya",
+    color="#FF9500", fontsize=13, fontweight="bold", pad=14,
 )
 
-# Legend (text labels in the corner)
 legend_items = [
-    ("#00D4FF", "inner cube  (w = −1)"),
-    ("#FF6B6B", "outer cube  (w = +1)"),
-    ("#C147E9", "bridging edges"),
+    ("#FF3B3B", "inner cube  (w = −1)"),
+    ("#4D9FFF", "outer cube  (w = +1)"),
+    ("#2DDF6A", "bridging edges"),
 ]
 for idx, (col, label) in enumerate(legend_items):
     ax.text2D(0.02, 0.12 - idx * 0.055, f"━  {label}",
               transform=ax.transAxes, color=col, fontsize=9, alpha=0.85)
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Face helper
+# ══════════════════════════════════════════════════════════════════════════════
+
+def make_face_poly(v3: np.ndarray) -> Poly3DCollection:
+    """Build a Poly3DCollection for all 24 projected tesseract faces."""
+    verts      = [[v3[i] for i in face] for face in FACES_4D]
+    facecolors = [FACE_RGBA[ft] for ft in FACE_TYPES]
+    poly = Poly3DCollection(verts, facecolors=facecolors,
+                            edgecolors="none", linewidths=0)
+    return poly
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Pre-build artist objects (mutate each frame — much faster than re-adding)
 # ══════════════════════════════════════════════════════════════════════════════
 
+# Initial face panels
+_v3_init = project(VERTS_4D)
+poly_ref  = [make_face_poly(_v3_init)]
+ax.add_collection3d(poly_ref[0])
+
+# Edge lines
 line_objs = []
 for etype in EDGE_TYPES:
     st = EDGE_STYLE[etype]
@@ -132,25 +186,36 @@ for etype in EDGE_TYPES:
                   solid_capstyle="round")
     line_objs.append(ln)
 
-# Vertex dots — size will be updated to reflect w-depth each frame
+# Vertex dots — coloured to match their cube (inner=red, outer=blue)
+_VERT_COLORS = [EDGE_STYLE["inner"]["color"] if VERTS_4D[k, 3] < 0
+                else EDGE_STYLE["outer"]["color"]
+                for k in range(len(VERTS_4D))]
+
 dot_objs = [
     ax.plot([], [], [], "o",
-            color="#ffffff", markersize=4, alpha=0.75, zorder=6)[0]
-    for _ in range(len(VERTS_4D))
+            color=_VERT_COLORS[k], markersize=5, alpha=0.95, zorder=6)[0]
+    for k in range(len(VERTS_4D))
 ]
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Animation
 # ══════════════════════════════════════════════════════════════════════════════
 
-FRAMES = 480   # one full loop
+FRAMES = 480
+SPEED  = 0.15   # fraction of 2π completed per loop  → very slow
 
 def update(frame: int):
-    t = frame / FRAMES * 2 * np.pi
+    t  = frame / FRAMES * 2 * np.pi * SPEED
 
-    # Compound 4D rotation: XW plane (main spin) + YZ plane (slower tumble)
-    R = rot4d("xw", t) @ rot4d("yz", t * 0.6) @ rot4d("zw", t * 0.3)
+    # Compound 4D rotation across three planes at different rates
+    R  = rot4d("xw", t) @ rot4d("yz", t * 0.6) @ rot4d("zw", t * 0.3)
     v3 = project(VERTS_4D @ R.T)       # (16, 3)
+
+    # Rebuild face panels (remove old, add new)
+    poly_ref[0].remove()
+    new_poly = make_face_poly(v3)
+    ax.add_collection3d(new_poly)
+    poly_ref[0] = new_poly
 
     # Update edge lines
     for idx, (a, b) in enumerate(EDGES):
@@ -173,5 +238,12 @@ ani = animation.FuncAnimation(
 )
 
 plt.tight_layout()
-plt.show()
 
+# ── Save as GIF ───────────────────────────────────────────────────────────────
+GIF_PATH = "rotating_tesseract.gif"
+print(f"Saving animation to {GIF_PATH} …")
+writer = animation.PillowWriter(fps=30)
+ani.save(GIF_PATH, writer=writer, dpi=100)
+print(f"Saved → {GIF_PATH}")
+
+plt.show()
