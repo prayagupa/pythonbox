@@ -14,6 +14,9 @@ Scene 3 — Harmonic Oscillator  (coherent state, classical oscillation)
 Scene 4 — Infinite Square Well  (n=1 + n=2 superposition / quantum beating)
 
 Natural units:  ℏ = m = 1
+
+📖 Full documentation (12th-grade friendly):
+   docs/07_non_relativistic_schrodinger_equation.md
 """
 
 import numpy as np
