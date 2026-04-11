@@ -50,7 +50,7 @@ def _edge_type(i: int, j: int) -> str:
 EDGE_TYPES = [_edge_type(i, j) for i, j in EDGES]
 
 EDGE_STYLE = {
-    "inner":  dict(color="#FF3B3B", lw=2.0, alpha=0.95),   # red
+    "inner":  dict(color="#4D9FFF", lw=2.0, alpha=0.95),   # blue (same as outer)
     "outer":  dict(color="#4D9FFF", lw=2.0, alpha=0.95),   # blue
     "bridge": dict(color="#2DDF6A", lw=1.4, alpha=0.85),   # green
 }
@@ -86,7 +86,7 @@ def _rgba(hex_c: str, a: float) -> tuple:
     return (r, g, b, a)
 
 FACE_RGBA = {
-    "inner":  _rgba("#FF3B3B", 0.35),   # red
+    "inner":  _rgba("#4D9FFF", 0.35),   # blue (same as outer)
     "outer":  _rgba("#4D9FFF", 0.35),   # blue
     "bridge": _rgba("#2DDF6A", 0.20),   # green
 }
@@ -129,13 +129,10 @@ ax.set_facecolor("#0d1117")
 
 for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
     pane.fill = False
-    pane.set_edgecolor("#1e2230")
+    pane.set_edgecolor("none")
 
-ax.tick_params(labelsize=0, length=0)
-ax.set_xticklabels([])
-ax.set_yticklabels([])
-ax.set_zticklabels([])
-ax.grid(True, color="#1a1f2e", linewidth=0.4)
+ax.set_axis_off()
+ax.grid(False)
 
 PAD = 1.1
 ax.set_xlim(-PAD, PAD)
@@ -147,14 +144,6 @@ ax.set_title(
     color="#FF9500", fontsize=13, fontweight="bold", pad=14,
 )
 
-legend_items = [
-    ("#FF3B3B", "inner cube  (w = −1)"),
-    ("#4D9FFF", "outer cube  (w = +1)"),
-    ("#2DDF6A", "bridging edges"),
-]
-for idx, (col, label) in enumerate(legend_items):
-    ax.text2D(0.02, 0.12 - idx * 0.055, f"━  {label}",
-              transform=ax.transAxes, color=col, fontsize=9, alpha=0.85)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Face helper
@@ -202,7 +191,7 @@ dot_objs = [
 # ══════════════════════════════════════════════════════════════════════════════
 
 FRAMES = 480
-SPEED  = 0.15   # fraction of 2π completed per loop  → very slow
+SPEED  = 0.60   # fraction of 2π completed per loop  → very slow
 
 def update(frame: int):
     t  = frame / FRAMES * 2 * np.pi * SPEED
@@ -240,7 +229,7 @@ ani = animation.FuncAnimation(
 plt.tight_layout()
 
 # ── Save as GIF ───────────────────────────────────────────────────────────────
-GIF_PATH = "rotating_tesseract.gif"
+GIF_PATH = "rotating_tesseract_maya.gif"
 print(f"Saving animation to {GIF_PATH} …")
 writer = animation.PillowWriter(fps=30)
 ani.save(GIF_PATH, writer=writer, dpi=100)
