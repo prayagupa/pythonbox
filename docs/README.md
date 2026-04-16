@@ -10,6 +10,7 @@
 |---|-------|-------------------|
 | 01 | [Fractals & the Julia Set](./06_fractals_julia_set.md) | How repeating a simple math rule creates infinitely detailed artwork |
 | 02 | [Non-Relativistic Schrödinger Equation](./07_non_relativistic_schrodinger_equation.md) | Why electrons behave like waves, quantum tunnelling, and how particles can be in two places at once |
+| 03 | [Pulsating Rings & Radiating Waves](./08_pulsating_rings_waves.md) | Circular wavefronts, cylindrical spreading (1/√r), two-source interference, standing waves, and 3-D surface displacement |
 
 ---
 
@@ -24,7 +25,6 @@ python src/main/python/physics/non_relativistic_schrodinger_equation.py
 
 # Run the fractal renderer
 python src/main/python/math/fractal.py
-```
 
 ---
 

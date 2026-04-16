@@ -58,17 +58,16 @@ FPS: int = 30
 T_TAIL: int = 240          # tail length in frames
 BG: str = "#060608"        # near-black background
 
-# Gradient: deep crimson → red → orange → golden-yellow → lime-green
+# Gradient: deep crimson → red → orange → yellow
 CMAP: LinearSegmentedColormap = LinearSegmentedColormap.from_list(
-    "fire_to_life",
+    "fire_to_yellow",
     [
         "#5a0000",   # very dark red  (oldest / fading)
         "#cc1100",   # vivid red
         "#ff4400",   # red-orange
         "#ff8800",   # amber-orange
         "#ffdd00",   # golden-yellow
-        "#aaff00",   # yellow-green
-        "#00ff66",   # bright green   (newest / head)
+        "#ffee66",   # pale yellow (newest / head)
     ],
 )
 
@@ -147,11 +146,11 @@ ax.add_collection3d(lc_glow, autolim=False)
 lc_core = Line3DCollection([], linewidths=1.0, zorder=5)
 ax.add_collection3d(lc_core, autolim=False)
 
-# Current-position dot — bright white with green halo
+# Current-position dot — bright white with orange halo
 dot, = ax.plot(
     [], [], [], "o",
     color="#ffffff", ms=5, zorder=6,
-    markeredgecolor="#00ff66", markeredgewidth=1.5,
+    markeredgecolor="#ffdd00", markeredgewidth=1.5,
 )
 
 
@@ -213,7 +212,7 @@ anim = animation.FuncAnimation(
     blit=False,
 )
 
-anim.save(str(OUT_PATH), writer=animation.PillowWriter(fps=FPS))
+anim.save(str(OUT_PATH), writer=animation.PillowWriter(fps=FPS), dpi=60)
 print(f"Saved → {OUT_PATH}")
 print("Displaying animation in UI window …")
 plt.show()
