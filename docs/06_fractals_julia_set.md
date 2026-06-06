@@ -1,6 +1,6 @@
 # 06 — Fractals & the Julia Set
 
-> **Source file:** `src/main/python/math/fractal.py`  
+> **Source file:** `modules/math/src/pythonbox_math/fractal.py`  
 > **Renders:** Mandelbrot Set · Julia Set · Burning Ship · Sierpiński Triangle
 
 ---

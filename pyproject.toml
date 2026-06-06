@@ -1,0 +1,28 @@
+# Root workspace — Gradle-style multi-module monorepo coordinator.
+# Install all modules:  make install   (or: uv sync)
+[project]
+name = "pythonbox"
+version = "0.1.0"
+description = "Multi-module Python playground monorepo"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["modules/*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.2.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.mypy]
+python_version = "3.8"
+ignore_missing_imports = true

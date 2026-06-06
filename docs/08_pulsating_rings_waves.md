@@ -1,12 +1,12 @@
 # 08 — Pulsating Rings & Radiating Waves
 
 > **Source files:**
-> - `src/main/python/physics/pulsating_rings_waves.py` — full 5-scene 3-D animation
-> - `src/main/python/physics/pulsating_rings_title_splash_3d.py` — Scene 0: title card
-> - `src/main/python/physics/single_pulsating_source_3d.py` — Scene 1: single source
-> - `src/main/python/physics/two_source_interference_3d.py` — Scene 2: two-source interference
-> - `src/main/python/physics/standing_wave_rings_3d.py` — Scene 3: standing wave
-> - `src/main/python/physics/ridge_wave_propagation.py` — bonus: ridge-peak tracking
+> - `modules/physics/src/pythonbox_physics/pulsating_rings_waves.py` — full 5-scene 3-D animation
+> - `modules/physics/src/pythonbox_physics/pulsating_rings_title_splash_3d.py` — Scene 0: title card
+> - `modules/physics/src/pythonbox_physics/single_pulsating_source_3d.py` — Scene 1: single source
+> - `modules/physics/src/pythonbox_physics/two_source_interference_3d.py` — Scene 2: two-source interference
+> - `modules/physics/src/pythonbox_physics/standing_wave_rings_3d.py` — Scene 3: standing wave
+> - `modules/physics/src/pythonbox_physics/ridge_wave_propagation.py` — bonus: ridge-peak tracking
 
 > **Shows:** Circular wavefronts · Cylindrical spreading · Two-source interference · Standing waves · 3-D surface displacement
 

@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pythonbox-basic"
+version = "0.1.0"
+description = "Basic Python language demos and task scheduling"
+requires-python = ">=3.8"
+dependencies = [
+    "celery>=5.2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

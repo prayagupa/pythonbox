@@ -1,7 +1,7 @@
 # Copilot instructions for pythonbox
 
 ## Big picture
-- This repository is a loose collection of standalone Python scripts under `src/main/python/`, not a packaged application. Keep changes local to the script you are editing unless the user explicitly asks for shared abstractions.
+- This repository is a Gradle-style multi-module monorepo: standalone scripts live under `modules/<name>/src/pythonbox_<name>/`. Keep changes local to the script you are editing unless the user explicitly asks for shared abstractions.
 - The codebase has two main families:
 	- `math/` and `physics/`: educational numerical visualizations that precompute arrays, animate with `matplotlib`, and usually save GIFs with `PillowWriter`.
 	- `storage/`, `json/`, `files/`, `basic/`: small demos for AWS, HTTP, local files, JSON, and language features.
@@ -13,13 +13,13 @@
 - Keep the existing educational tone in simulation docstrings, titles, and comments.
 
 ## Running code
-- Environment setup is lightweight: create a venv and run `pip install -r requirements.txt` from the repo root.
+- Environment setup: create a venv, then `make install` (or `pip install -r requirements.txt`) from the repo root.
 - There is no discovered `tests/` directory or central test runner. Validate by running the specific script you changed.
 - Common manual runs from the repo root:
-	- `python src/main/python/math/fractal.py`
-	- `python src/main/python/physics/non_relativistic_schrodinger_equation.py`
-	- `python src/main/python/storage/write_to_dynamodb.py`
-- Some filenames contain hyphens, for example `src/main/python/storage/amazon-storage.py` and `src/main/python/storage/scan-buckets.py`; run these as files, not with `python -m`.
+	- `python modules/math/src/pythonbox_math/fractal.py`
+	- `python modules/physics/src/pythonbox_physics/non_relativistic_schrodinger_equation.py`
+	- `python modules/storage/src/pythonbox_storage/write_to_dynamodb.py`
+- Some filenames contain hyphens, for example `modules/storage/src/pythonbox_storage/amazon-storage.py` and `modules/storage/src/pythonbox_storage/scan-buckets.py`; run these as files, not with `python -m`.
 
 ## Project-specific patterns
 - Simulation scripts often precompute all frames first, then render once. Follow the existing pattern in `math/fractal.py`, `physics/free_wave_packet.py`, and `physics/non_relativistic_schrodinger_equation.py` instead of introducing streaming or class-heavy designs.

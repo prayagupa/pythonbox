@@ -4,7 +4,7 @@
 - **Language**: Python 3.8+
 - **Package Manager**: pip
 - **Virtual Environment**: venv
-- **Main Source Directory**: `src/main/python/`
+- **Main Source Directory**: `modules/*/src/` (Gradle-style multi-module monorepo)
 
 ## Code Style and Formatting
 
@@ -100,17 +100,17 @@ deactivate
 
 ### Black (Code Formatter)
 ```bash
-black src/main/python/
+make format
 ```
 
 ### Flake8 (Linter)
 ```bash
-flake8 src/main/python/ --max-line-length=88
+make lint
 ```
 
 ### MyPy (Type Checker)
 ```bash
-mypy src/main/python/ --ignore-missing-imports
+make typecheck
 ```
 
 ### Pre-commit Hooks
@@ -182,7 +182,7 @@ Use `pathlib` for path operations:
 ```python
 from pathlib import Path
 
-file_path = Path('src/main/python/data.csv')
+file_path = Path('modules/files/src/pythonbox_files/data.csv')
 if file_path.exists():
     data = file_path.read_text()
 ```

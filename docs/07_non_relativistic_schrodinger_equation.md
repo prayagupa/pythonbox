@@ -1,6 +1,6 @@
 # 07 — The Schrödinger Equation (For Normal People)
 
-> **Source file:** `src/main/python/physics/non_relativistic_schrodinger_equation.py`
+> **Source file:** `modules/physics/src/pythonbox_physics/non_relativistic_schrodinger_equation.py`
 > **Shows:** Free Wave Packet · Quantum Tunnelling · Harmonic Oscillator · Infinite Square Well
 
 ---

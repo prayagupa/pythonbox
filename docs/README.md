@@ -21,10 +21,10 @@
 pip install -r requirements.txt
 
 # Run the Schrödinger equation simulation
-python src/main/python/physics/non_relativistic_schrodinger_equation.py
+python modules/physics/src/pythonbox_physics/non_relativistic_schrodinger_equation.py
 
 # Run the fractal renderer
-python src/main/python/math/fractal.py
+python modules/math/src/pythonbox_math/fractal.py
 
 ---
 
