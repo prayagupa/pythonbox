@@ -36,7 +36,7 @@ ANCHOR_FRAMES = [i * FRAMES_PER_SEGMENT for i in range(len(years))]
 
 fig, ax = plt.subplots(figsize=(10, 6))
 
-ax.set_title("Career Earnings Journey")
+ax.set_title("Earnings Journey")
 ax.set_xlabel("Year")
 ax.set_ylabel("Annual Earnings ($)")
 ax.grid(True)
